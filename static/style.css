@@ -1,0 +1,17 @@
+@charset "utf-8";
+
+.vertical {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 45%;
+}
+
+#box {
+    height: 60px;
+    width: 45%;
+    font-size: 13px;
+    color: #000000;
+    word-spacing: 0.5em;
+    text-align: center;
+}
