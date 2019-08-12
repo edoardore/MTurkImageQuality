@@ -1,7 +1,7 @@
 # MTurkImageQuality
 
 ## Esecuzione
-Eseguire il modulo app.py per visualizzare la pagina web, è necessario un database (ad esempio phpmyadmin su XAMPP) (in: "localhost", nome utente:"testuser", psw accesso:"test123", nome db:"mysqldb").
+Eseguire il modulo app.py per visualizzare la pagina web, è necessario un database (ad esempio phpmyadmin con XAMPP) (in: "localhost", nome utente:"testuser", psw accesso:"test123", nome db:"mysqldb").
 ## Librerie utilizzate
 ```python
 os
