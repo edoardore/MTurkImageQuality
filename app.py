@@ -70,7 +70,7 @@ def initalization():
     db.close()
 
 
-#initalization()  # run this line the first time ever, you need to set up MYSQL dbms earlier (e.g. PhpMyAdmin in XAMPP).
+# initalization()  # run this line the first time ever, you need to set up MYSQL dbms earlier (e.g. PhpMyAdmin in XAMPP).
 # after the execution, recomment this line with #
 
 
@@ -168,6 +168,10 @@ def index():
 def get():
     client = pickle.load(open("client.p", "rb"))
     quality = request.form['quality']
+    while (quality == '0'):
+        image = client.image
+        full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
+        return render_template('index.html', imm=full_filename, error='Move the slider to vote')
     client.increaseHit()
     addVote(client, quality)
     if client.numHIT < 10:
