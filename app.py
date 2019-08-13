@@ -69,7 +69,8 @@ def initalization():
     # disconnect from server
     db.close()
 
-#initalization()  #run this line the first time ever, you need to set up MYSQL dbms earlier (e.g. PhpMyAdmin in XAMPP).
+
+#initalization()  # run this line the first time ever, you need to set up MYSQL dbms earlier (e.g. PhpMyAdmin in XAMPP).
 # after the execution, recomment this line with #
 
 
@@ -115,10 +116,12 @@ def addVote(Client, vote):
     db = pymysql.connect("localhost", "testuser", "test123", "mysqldb")
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
+    imageID = int(Client.imageID.get("Image_ID"))
+    userID = int(Client.userID.get("MAX(USER_ID)"))
+    vote = int(vote)
     # Prepare SQL query to INSERT a record into the database.
     sql = "INSERT INTO valutation(IMAGE_ID, USER_ID, USER_VOTE)VALUES " \
-          "('%s', '%s', '%s')" % (
-              Client.imageID, Client.userID, vote)
+          "('%s', '%s', '%s')" % (imageID, userID, vote)
     try:
         # Execute the SQL command
         cursor.execute(sql)
@@ -157,10 +160,11 @@ def index():
     client = pickle.load(open("client.p", "rb"))
     image = client.getImg()
     full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
+    pickle.dump(client, open("client.p", "wb"))
     return render_template('index.html', imm=full_filename)
 
 
-@app.route('/index', methods=['POST'])
+@app.route('/indexnext', methods=['POST'])
 def get():
     client = pickle.load(open("client.p", "rb"))
     quality = request.form['quality']
@@ -169,6 +173,7 @@ def get():
     if client.numHIT < 10:
         image = client.getImg()
         full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
+        pickle.dump(client, open("client.p", "wb"))
         return render_template('index.html', imm=full_filename)
     else:
         return 'Finish!'
