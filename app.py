@@ -171,7 +171,7 @@ def get():
     while (quality == '0'):
         image = client.image
         full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
-        return render_template('index.html', imm=full_filename, error='Move the slider to vote')
+        return render_template('index.html', imm=full_filename, error='Please move the slider')
     client.increaseHit()
     addVote(client, quality)
     if client.numHIT < 10:
