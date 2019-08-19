@@ -10,7 +10,7 @@ pickle
 pymysql
 flask
 boto3
-pyopenssl
+ssl
 ```
 
 
