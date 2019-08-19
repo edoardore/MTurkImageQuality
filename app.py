@@ -159,7 +159,8 @@ def get():
         pickle.dump(client, open("client.p", "wb"))
         return render_template('index.html', imm=full_filename)
     else:
-        return 'Finish!'
+        render_data = pickle.load(open("amazondata.p", "rb"))
+        return render_template('end.html', name=render_data)
 
 
 class Client:
