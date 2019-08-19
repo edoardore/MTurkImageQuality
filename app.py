@@ -3,75 +3,28 @@ import os
 import random
 import pickle
 import pymysql
+import ssl
+
+# Start Configuration Variables
+AWS_ACCESS_KEY_ID = ""
+AWS_SECRET_ACCESS_KEY = ""
+DEV_ENVIROMENT_BOOLEAN = True
+DEBUG = True
+# End Configuration Variables
+
+# This allows us to specify whether we are pushing to the sandbox or live site.
+if DEV_ENVIROMENT_BOOLEAN:
+    AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit"
+else:
+    AMAZON_HOST = "https://www.mturk.com/mturk/externalSubmit"
 
 app = Flask(__name__)
 
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain("ca.crt", "ca.key")
+
 IMAGE_FOLDER = os.path.join('static', 'images')
 app.config['UPLOAD_FOLDER'] = IMAGE_FOLDER
-
-
-def initalization():
-    # Open database connection
-    db = pymysql.connect("localhost", "testuser", "test123", "mysqldb")
-    # prepare a cursor object using cursor() method
-    cursor = db.cursor()
-    # Drop table if it already exist using execute() method.
-    cursor.execute("DROP TABLE IF EXISTS images")
-    # Create table as per requirement
-    sql = """CREATE TABLE `mysqldb`.`images`(`IMAGE_ID` INT NOT NULL AUTO_INCREMENT, `IMAGE_FILE` VARCHAR(100) 
-    NOT NULL, PRIMARY KEY (IMAGE_ID))ENGINE = InnoDB;"""
-    # Execute the SQL command
-    cursor.execute(sql)
-    # disconnect from server
-    db.close()
-    # Open database connection
-    db = pymysql.connect("localhost", "testuser", "test123", "mysqldb")
-    # prepare a cursor object using cursor() method
-    cursor = db.cursor()
-    files = os.listdir("static/images")
-    for i in range(0, len(files)):
-        # Prepare SQL query to INSERT a record into the database.
-        sql = "INSERT INTO images(IMAGE_ID, IMAGE_FILE)VALUES ('%s', '%s')" % (i, files[i])
-        try:
-            # Execute the SQL command
-            cursor.execute(sql)
-            # Commit your changes in the database
-            db.commit()
-        except:
-            # Rollback in case there is any error
-            db.rollback()
-    # disconnect from server
-    db.close()
-    # Open database connection
-    db = pymysql.connect("localhost", "testuser", "test123", "mysqldb")
-    # prepare a cursor object using cursor() method
-    cursor = db.cursor()
-    # Drop table if it already exist using execute() method.
-    cursor.execute("DROP TABLE IF EXISTS valutation")
-    # Create table as per requirement
-    sql = """CREATE TABLE `mysqldb`.`valutation`(`IMAGE_ID` INT NOT NULL, USER_ID INT NOT NULL, 
-        USER_VOTE INT NOT NULL)ENGINE = InnoDB;"""
-    # Execute the SQL command
-    cursor.execute(sql)
-    # disconnect from server
-    db.close()
-    # Open database connection
-    db = pymysql.connect("localhost", "testuser", "test123", "mysqldb")
-    # prepare a cursor object using cursor() method
-    cursor = db.cursor()
-    # Drop table if it already exist using execute() method.
-    cursor.execute("DROP TABLE IF EXISTS client")
-    # Create table as per requirement
-    sql = """CREATE TABLE `mysqldb`.`client`(USER_ID INT NOT NULL AUTO_INCREMENT, USER_AGE INT NOT NULL,
-                USER_SEX VARCHAR(1), USER_MONITOR VARCHAR(10), USER_DISTANCE VARCHAR(3), PRIMARY KEY (USER_ID))ENGINE = InnoDB;"""
-    # Execute the SQL command
-    cursor.execute(sql)
-    # disconnect from server
-    db.close()
-
-
-# initalization()  # run this line the first time ever, you need to set up MYSQL dbms earlier (e.g. PhpMyAdmin in XAMPP).
-# after the execution, recomment this line with #
 
 
 def getUserID():
@@ -134,9 +87,34 @@ def addVote(Client, vote):
     db.close()
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    # The following code segment can be used to check if the turker has accepted the task yet
+    if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
+        # Our worker hasn't accepted the HIT (task) yet
+        pass
+    else:
+        # Our worker accepted the task
+        pass
+
+    '''
+    We're creating a dict with which we'll render our template page.html
+    Note we are grabbing GET Parameters
+    In this case, I'm using someInfoToPass as a sample parameter to pass information
+    '''
+    render_data = {
+        "worker_id": request.args.get("workerId"),
+        "assignment_id": request.args.get("assignmentId"),
+        "amazon_host": AMAZON_HOST,
+        "hit_id": request.args.get("hitId"),
+        "turk_submit_to": request.args.get("turkSubmitTo")
+    }
+    pickle.dump(render_data, open("amazondata.p", "wb"))
+    resp = make_response(render_template('login.html', name=render_data))
+    # This is particularly nasty gotcha.
+    # Without this header, your iFrame will not render in Amazon
+    resp.headers['x-frame-options'] = 'this_can_be_anything'
+    return resp
 
 
 @app.route('/login', methods=['POST'])
@@ -145,8 +123,9 @@ def getValue():
     age = request.form['age']
     display = request.form['display']
     distance = request.form['distance']
+    render_data = pickle.load(open("amazondata.p", "rb"))
     while (sex == '' or age == '' or display == '' or distance == 0):
-        return render_template('login.html', error='Missing value(s)')
+        return render_template('login.html', error='Missing value(s)', name=render_data)
     if (sex != '' or age != '' or display != '' or distance != 0):
         client = Client(sex, age, display, distance)
         addClient(client)
@@ -212,4 +191,4 @@ class Client:
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, ssl_context=context)

@@ -9,6 +9,8 @@ random
 pickle 
 pymysql
 flask
+boto3
+pyopenssl
 ```
 
 

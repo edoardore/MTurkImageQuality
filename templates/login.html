@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css">
 <head>
@@ -36,5 +36,11 @@
     <input type="submit" value="Submit" class="vertical">
 </form>
 <h4 class="vertical">{{error}}</h4>
+<form id="endForm" action="{{ name.amazon_host }}" method="POST">
+    <input type="hidden" id="assignmentId" value="{{ name.assignment_id }}" name="assignmentId"/>
+    <input type="hidden" id="workerId" value="{{ name.worker_id }}" name="workerId"/>
+    <input type="hidden" id="hitId" value="{{ name.hit_id }}" name="hitId"/>
+    <input type="hidden" id="turkSubmitTo" value="{{name.turk_submit_to}}" name="turkSubmitTo">
+</form>
 </body>
 </html>
