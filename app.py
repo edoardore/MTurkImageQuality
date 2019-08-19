@@ -96,12 +96,6 @@ def login():
     else:
         # Our worker accepted the task
         pass
-
-    '''
-    We're creating a dict with which we'll render our template page.html
-    Note we are grabbing GET Parameters
-    In this case, I'm using someInfoToPass as a sample parameter to pass information
-    '''
     render_data = {
         "worker_id": request.args.get("workerId"),
         "assignment_id": request.args.get("assignmentId"),
