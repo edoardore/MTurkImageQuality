@@ -21,7 +21,7 @@ else:
 app = Flask(__name__)
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-context.load_cert_chain("ca.crt", "ca.key")
+context.load_cert_chain("miocert.crt", "miocert.key")
 
 IMAGE_FOLDER = os.path.join('static', 'images')
 app.config['UPLOAD_FOLDER'] = IMAGE_FOLDER
@@ -104,7 +104,7 @@ def login():
         "turk_submit_to": request.args.get("turkSubmitTo")
     }
     pickle.dump(render_data, open("amazondata.p", "wb"))
-    resp = make_response(render_template('login.html', name=render_data))
+    resp = make_response(render_template('start.html', name=render_data))
     # This is particularly nasty gotcha.
     # Without this header, your iFrame will not render in Amazon
     resp.headers['x-frame-options'] = 'this_can_be_anything'
@@ -118,9 +118,9 @@ def getValue():
     display = request.form['display']
     distance = request.form['distance']
     render_data = pickle.load(open("amazondata.p", "rb"))
-    while (sex == '' or age == '' or display == '' or distance == 0):
-        return render_template('login.html', error='Missing value(s)', name=render_data)
-    if (sex != '' or age != '' or display != '' or distance != 0):
+    while (sex == '' or age == '' or display == '' or distance == ''):
+        return render_template('start.html', error='Missing value(s)', name=render_data)
+    if (sex != '' or age != '' or display != '' or distance != ''):
         client = Client(sex, age, display, distance)
         addClient(client)
         client.getUserID()
@@ -186,4 +186,4 @@ class Client:
 
 
 if __name__ == '__main__':
-    app.run(debug=True, ssl_context=context)
+    app.run(debug=True, ssl_context=context, host='192.168.1.79')
