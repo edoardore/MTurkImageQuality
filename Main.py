@@ -21,8 +21,8 @@ mturk_environment = environments["live"] if create_hits_in_live else environment
 
 # add access key id & secret access key for the use (tengo le chiavi nel file chiavi.txt nel desktop)
 region_name = 'us-east-1'
-aws_access_key_id = ''
-aws_secret_access_key = ''
+aws_access_key_id = 'AKIAR6AXQDP6N6PUYYGU'
+aws_secret_access_key = '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'
 
 endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
 

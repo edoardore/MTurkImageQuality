@@ -6,8 +6,8 @@ import pymysql
 import ssl
 
 # Start Configuration Variables
-AWS_ACCESS_KEY_ID = ""
-AWS_SECRET_ACCESS_KEY = ""
+AWS_ACCESS_KEY_ID = "AKIAR6AXQDP6N6PUYYGU"
+AWS_SECRET_ACCESS_KEY = "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"
 DEV_ENVIROMENT_BOOLEAN = True
 DEBUG = True
 # End Configuration Variables
