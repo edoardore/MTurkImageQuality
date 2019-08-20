@@ -10,7 +10,10 @@
 </head>
 <body>
 <div id="wrapper">
-    <img src="{{ url_for('static', filename='submit.png') }}" id="example" alt="submit button">
+    <div class="form-group col-md-4">
+        <p>Thanks for your HIT</p>
+        <button class="btn btn-primary " value="Submit" type="submit" id="example">Submit</button>
+    </div>
     <div id="end-dialog-message" title="Ready to submit?">
     </div>
 </div>
@@ -24,12 +27,11 @@
 <script>
     function endDialog() {
         $("#end-dialog-message").dialog({
-
             resizable: false,
             height: 140,
             modal: true,
             buttons: {
-                "Submit Results?": function () {
+                "Submit Results": function () {
                     var string = "whateverFinalResultsWeWantToPass";
                     $('input[name="user-input"]').val(string);
                     $("#endForm").submit();
@@ -43,13 +45,10 @@
                 }
             }
         });
-
-
     }
 
     $('#example').click(function () {
         endDialog();
     });
-
 </script>
 </html>
