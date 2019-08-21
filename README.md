@@ -17,6 +17,8 @@ ssl
 
 ![Screenshot](InkedCattura2_LI.jpg)
 
+(Grafica azzurra in fase di miglioramento)
+
 
 ## License
 [Edoardo Re](https://github.com/edoardore), 2019
