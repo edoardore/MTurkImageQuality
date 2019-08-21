@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Page</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/smoothness/jquery-ui.css">
@@ -9,13 +10,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 </head>
 <body>
-<div id="wrapper">
-    <div class="form-group col-md-4">
-        <p>Thanks for your HIT</p>
+
+
+<div class="container-fluid">
+    <div class="col-sm-12 text-center">
+        <h6>Thanks for your HIT {{name.worker_id}}</h6>
         <button class="btn btn-primary " value="Submit" type="submit" id="example">Submit</button>
     </div>
-    <div id="end-dialog-message" title="Ready to submit?">
-    </div>
+</div>
+
+
+<div id="end-dialog-message" title="Ready to submit?">
 </div>
 <form id="endForm" action="{{ name.amazon_host }}" method="POST">
     <input type="hidden" id="assignmentId" value="{{ name.assignment_id }}" name="assignmentId"/>
@@ -32,7 +37,7 @@
             modal: true,
             buttons: {
                 "Submit Results": function () {
-                    var string = "whateverFinalResultsWeWantToPass";
+                    var string = "HitCompleted by {{name.worker_id}}";
                     $('input[name="user-input"]').val(string);
                     $("#endForm").submit();
                     $(this).dialog("close");
