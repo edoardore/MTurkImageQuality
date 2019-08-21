@@ -1,0 +1,17 @@
+ul {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    width: 100%;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+div {
+    text-align: center;
+}
+
+input[type="range"] {
+    width: 512px;
+}

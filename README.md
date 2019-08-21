@@ -13,10 +13,11 @@ flask
 boto3
 ssl
 ```
-![Screenshot](InkedCattura1_LI.jpg)
+![Screenshot](imm.jpg)
 
-![Screenshot](InkedCattura2_LI.jpg)
+![Screenshot](imm2.jpg)
 
+![Screenshot](imm3.jpg)
 (Grafica azzurra in fase di miglioramento)
 
 
