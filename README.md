@@ -18,8 +18,6 @@ ssl
 ![Screenshot](imm2.jpg)
 
 ![Screenshot](imm3.jpg)
-(Grafica azzurra in fase di miglioramento)
-
 
 ## License
 [Edoardo Re](https://github.com/edoardore), 2019
