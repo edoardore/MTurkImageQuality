@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ExternalQuestion
         xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
-    <ExternalURL>https://192.168.1.79:5000/</ExternalURL>
+    <ExternalURL>https://94.34.148.125/</ExternalURL>
     <FrameHeight>0</FrameHeight>
 </ExternalQuestion>

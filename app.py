@@ -87,8 +87,13 @@ def addVote(Client, vote):
     db.close()
 
 
+clientsConnected = []
+
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    client = Client()
+    clientsConnected.append(client)
     # The following code segment can be used to check if the turker has accepted the task yet
     if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         # Our worker hasn't accepted the HIT (task) yet
@@ -105,9 +110,13 @@ def login():
     }
     pickle.dump(render_data, open("amazondata.p", "wb"))
     resp = make_response(render_template('start.html', name=render_data))
-    # This is particularly nasty gotcha.
     # Without this header, your iFrame will not render in Amazon
     resp.headers['x-frame-options'] = 'this_can_be_anything'
+    client.ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    client.workerID = render_data['worker_id']
+    client.assignmentID = render_data['assignment_id']
+    client.hitID = render_data['hit_id']
+    client.turkSubmitTo = render_data['turk_submit_to']
     return resp
 
 
@@ -117,57 +126,86 @@ def getValue():
     age = request.form['age']
     display = request.form['display']
     distance = request.form['distance']
-    render_data = pickle.load(open("amazondata.p", "rb"))
+    ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    for c in clientsConnected:
+        if c.ip == ip:
+            render_data = {
+                "worker_id": c.workerID,
+                "assignment_id": c.assignmentID,
+                "amazon_host": AMAZON_HOST,
+                "hit_id": c.hitID,
+                "turk_submit_to": c.turkSubmitTo
+            }
     while (sex == '' or age == '' or display == '' or distance == ''):
         return render_template('start.html', error='Missing value(s)', name=render_data)
     if (sex != '' or age != '' or display != '' or distance != ''):
-        client = Client(sex, age, display, distance)
-        addClient(client)
-        client.getUserID()
-        pickle.dump(client, open("client.p", "wb"))
+        for c in clientsConnected:
+            if c.ip == ip:
+                c.sex = sex
+                c.age = age
+                c.display = display
+                c.distance = distance
+                addClient(c)
+                c.getUserID()
         return redirect(url_for('index'))
 
 
 @app.route('/index')
 def index():
-    client = pickle.load(open("client.p", "rb"))
-    image = client.getImg()
+    ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    for c in clientsConnected:
+        if c.ip == ip:
+            image = c.getImg()
     full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
-    pickle.dump(client, open("client.p", "wb"))
     return render_template('index.html', imm=full_filename)
 
 
 @app.route('/indexnext', methods=['POST'])
 def get():
-    client = pickle.load(open("client.p", "rb"))
+    ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
     quality = request.form['quality']
     while (quality == '0'):
-        image = client.image
+        for c in clientsConnected:
+            if c.ip == ip:
+                image = c.image
         full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
         return render_template('index.html', imm=full_filename, error='Please move the slider')
-    client.increaseHit()
-    addVote(client, quality)
-    if client.numHIT < 10:
-        image = client.getImg()
-        full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
-        pickle.dump(client, open("client.p", "wb"))
-        return render_template('index.html', imm=full_filename)
-    else:
-        render_data = pickle.load(open("amazondata.p", "rb"))
-        return render_template('end.html', name=render_data)
+    for c in clientsConnected:
+        if c.ip == ip:
+            c.increaseHit()
+            addVote(c, quality)
+            if c.numHIT < 10:
+                image = c.getImg()
+                full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
+                return render_template('index.html', imm=full_filename)
+            else:
+                render_data = {
+                    "worker_id": c.workerID,
+                    "assignment_id": c.assignmentID,
+                    "amazon_host": AMAZON_HOST,
+                    "hit_id": c.hitID,
+                    "turk_submit_to": c.turkSubmitTo
+                }
+                clientsConnected.remove(c)
+                return render_template('end.html', name=render_data)
 
 
 class Client:
-    def __init__(self, sex, age, display, distance):
-        self.sex = sex
-        self.age = age
-        self.display = display
-        self.distance = distance
+    def __init__(self):
+        self.sex = None
+        self.age = None
+        self.display = None
+        self.distance = None
         self.numHIT = 0
         self.image = None
         self.files = os.listdir("static/images")
-        self.userID = 0
-        self.imageID = 0
+        self.userID = None
+        self.imageID = None
+        self.ip = None
+        self.workerID = None
+        self.assignmentID = None
+        self.hitID = None
+        self.turkSubmitTo = None
 
     def increaseHit(self):
         self.numHIT += 1
