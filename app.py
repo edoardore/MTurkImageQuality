@@ -1,7 +1,6 @@
 from flask import *
 import os
 import random
-import pickle
 import pymysql
 import ssl
 
