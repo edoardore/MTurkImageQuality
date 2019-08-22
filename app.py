@@ -108,7 +108,6 @@ def login():
         "hit_id": request.args.get("hitId"),
         "turk_submit_to": request.args.get("turkSubmitTo")
     }
-    pickle.dump(render_data, open("amazondata.p", "wb"))
     resp = make_response(render_template('start.html', name=render_data))
     # Without this header, your iFrame will not render in Amazon
     resp.headers['x-frame-options'] = 'this_can_be_anything'
@@ -147,6 +146,7 @@ def getValue():
                 c.distance = distance
                 addClient(c)
                 c.getUserID()
+                break
         return redirect(url_for('index'))
 
 
@@ -168,6 +168,7 @@ def get():
         for c in clientsConnected:
             if c.ip == ip:
                 image = c.image
+                break
         full_filename = os.path.join(app.config['UPLOAD_FOLDER'], image)
         return render_template('index.html', imm=full_filename, error='Please move the slider')
     for c in clientsConnected:
