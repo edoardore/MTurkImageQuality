@@ -92,29 +92,29 @@ clientsConnected = []
 @app.route('/', methods=['GET', 'POST'])
 def login():
     client = Client()
-    clientsConnected.append(client)
     # The following code segment can be used to check if the turker has accepted the task yet
     if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         # Our worker hasn't accepted the HIT (task) yet
         pass
     else:
         # Our worker accepted the task
+        clientsConnected.append(client)
         pass
     render_data = {
-        "worker_id": request.args.get("workerId"),
-        "assignment_id": request.args.get("assignmentId"),
-        "amazon_host": AMAZON_HOST,
         "hit_id": request.args.get("hitId"),
-        "turk_submit_to": request.args.get("turkSubmitTo")
+        "turk_submit_to": request.args.get("turkSubmitTo"),
+        "amazon_host": AMAZON_HOST,
+        "worker_id": request.args.get("workerId"),
+        "assignment_id": request.args.get("assignmentId")
     }
     resp = make_response(render_template('start.html', name=render_data))
     # Without this header, your iFrame will not render in Amazon
     resp.headers['x-frame-options'] = 'this_can_be_anything'
     client.ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    client.workerID = render_data['worker_id']
-    client.assignmentID = render_data['assignment_id']
     client.hitID = render_data['hit_id']
     client.turkSubmitTo = render_data['turk_submit_to']
+    client.workerID = render_data['worker_id']
+    client.assignmentID = render_data['assignment_id']
     return resp
 
 
@@ -202,10 +202,10 @@ class Client:
         self.userID = None
         self.imageID = None
         self.ip = None
-        self.workerID = None
+        self.workerID = ''
         self.assignmentID = None
         self.hitID = None
-        self.turkSubmitTo = None
+        self.turkSubmitTo = ''
 
     def increaseHit(self):
         self.numHIT += 1
@@ -225,3 +225,5 @@ class Client:
 
 if __name__ == '__main__':
     app.run(debug=True, ssl_context=context, host='192.168.1.79')
+    # app.run(debug=True, ssl_context=context, host='127.0.0.1')
+    # Assieme al file .xml levo il commento se non uso port forwarding del router

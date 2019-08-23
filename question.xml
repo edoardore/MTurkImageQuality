@@ -2,5 +2,7 @@
 <ExternalQuestion
         xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
     <ExternalURL>https://94.34.148.125/</ExternalURL>
+    <!--<ExternalURL>https://127.0.0.1:5000</ExternalURL>-->
+    <!--levare commento se non utilizzo portforwarding del router-->
     <FrameHeight>0</FrameHeight>
 </ExternalQuestion>
